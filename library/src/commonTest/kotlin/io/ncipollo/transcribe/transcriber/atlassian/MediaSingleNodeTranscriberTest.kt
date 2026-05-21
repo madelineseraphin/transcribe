@@ -25,12 +25,13 @@ class MediaSingleNodeTranscriberTest {
         mediaType = "image/png",
         fileSize = 1024L,
         fileId = "8dfdd993-f45f-48ea-bde6-ac89319cbc37",
-        downloadLink = "https://example.com/download/att1",
+        pageId = "page1",
     )
 
     private val context = ADFTranscriberContext(
         attachmentContext = AttachmentContext.from(listOf(testAttachment)),
         pageContext = pageContext,
+        baseWikiUrl = "https://test.atlassian.net/wiki",
     )
 
     @Test
@@ -54,7 +55,7 @@ class MediaSingleNodeTranscriberTest {
             content = "![Test](test_page/att1_test_image.png)\n",
             actions = listOf(
                 AttachmentDownload(
-                    downloadPath = "https://example.com/download/att1",
+                    downloadPath = "https://test.atlassian.net/wiki/rest/api/content/page1/child/attachment/att1/download",
                     localRelativePath = "test_page/att1_test_image.png",
                 ),
             ),
@@ -83,7 +84,7 @@ class MediaSingleNodeTranscriberTest {
             content = "![](test_page/att1_test_image.png)\n",
             actions = listOf(
                 AttachmentDownload(
-                    downloadPath = "https://example.com/download/att1",
+                    downloadPath = "https://test.atlassian.net/wiki/rest/api/content/page1/child/attachment/att1/download",
                     localRelativePath = "test_page/att1_test_image.png",
                 ),
             ),
@@ -126,8 +127,8 @@ class MediaSingleNodeTranscriberTest {
     }
 
     @Test
-    fun transcribe_missingDownloadLink() {
-        val attachmentWithoutDownloadLink = Attachment(
+    fun transcribe_missingPageId() {
+        val attachmentWithoutPageId = Attachment(
             id = "att1",
             status = "current",
             title = "Test Image.PNG",
@@ -135,11 +136,11 @@ class MediaSingleNodeTranscriberTest {
             mediaType = "image/png",
             fileSize = 1024L,
             fileId = "8dfdd993-f45f-48ea-bde6-ac89319cbc37",
-            downloadLink = null,
         )
-        val contextWithoutDownloadLink = ADFTranscriberContext(
-            attachmentContext = AttachmentContext.from(listOf(attachmentWithoutDownloadLink)),
+        val contextWithoutPageId = ADFTranscriberContext(
+            attachmentContext = AttachmentContext.from(listOf(attachmentWithoutPageId)),
             pageContext = pageContext,
+            baseWikiUrl = "https://test.atlassian.net/wiki",
         )
         val node =
             MediaSingleNode(
@@ -157,7 +158,7 @@ class MediaSingleNodeTranscriberTest {
                 ),
             )
         val expected = TranscribeResult("")
-        val result = transcriber.transcribe(node, contextWithoutDownloadLink)
+        val result = transcriber.transcribe(node, contextWithoutPageId)
         assertEquals(expected, result)
     }
 }

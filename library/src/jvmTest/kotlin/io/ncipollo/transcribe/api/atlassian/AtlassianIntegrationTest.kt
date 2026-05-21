@@ -5,6 +5,7 @@ import io.ncipollo.transcribe.TranscribeConfiguration
 import io.ncipollo.transcribe.fixtures.markdown.ComplexMarkdownFixture
 import kotlinx.coroutines.runBlocking
 import java.io.File
+import java.nio.file.Files
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -41,6 +42,16 @@ class AtlassianIntegrationTest {
 
             println("-----------")
             println(result.markdown)
+
+            println("-----------")
+
+            val tmpDir = Files.createTempDirectory("transcribe-attachments").toFile()
+            result.attachmentResults.forEach { attachment ->
+                val file = File(tmpDir, attachment.localRelativePath)
+                file.parentFile.mkdirs()
+                file.writeBytes(attachment.data)
+            }
+            println("Attachments written to: ${tmpDir.absolutePath}")
 
             transcribe.close()
         }

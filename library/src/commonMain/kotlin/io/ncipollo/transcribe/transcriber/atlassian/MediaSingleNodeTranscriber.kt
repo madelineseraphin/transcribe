@@ -24,16 +24,13 @@ class MediaSingleNodeTranscriber : ADFTranscriber<MediaSingleNode> {
         val attachment = context.attachmentContext.attachmentsByFileId[fileId]
             ?: return TranscribeResult("")
 
-        val downloadLink = attachment.downloadLink ?: return TranscribeResult("")
-        val fullDownloadLink = if (downloadLink.startsWith("/") && context.baseWikiUrl.isNotEmpty()) {
-            "${context.baseWikiUrl}$downloadLink"
-        } else {
-            downloadLink
-        }
+        val pageId = attachment.pageId ?: return TranscribeResult("")
+        val downloadPath =
+            "${context.baseWikiUrl}/rest/api/content/$pageId/child/attachment/${attachment.id}/download"
 
         val altText = mediaNode.attrs.alt ?: ""
         val imagePath = imagePath(context, attachment)
-        val action = downloadAction(imagePath, fullDownloadLink)
+        val action = downloadAction(imagePath, downloadPath)
 
         return TranscribeResult("![$altText]($imagePath)\n", listOf(action))
     }
