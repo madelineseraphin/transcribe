@@ -23,11 +23,12 @@ class ConfluenceToMarkdownTranscriberTest {
         mediaType = "image/png",
         fileSize = 1024L,
         fileId = "8dfdd993-f45f-48ea-bde6-ac89319cbc37",
-        downloadLink = "some/path/to/image.png",
+        pageId = "page1",
     )
 
     private val context = ADFTranscriberContext(
         attachmentContext = AttachmentContext.from(listOf(testAttachment)),
+        baseWikiUrl = "https://test.atlassian.net/wiki",
     )
 
     @Test
@@ -91,7 +92,7 @@ class ConfluenceToMarkdownTranscriberTest {
             content = ComplexMarkdownFixture.COMPLEX_MARKDOWN,
             actions = listOf(
                 AttachmentDownload(
-                    downloadPath = "some/path/to/image.png",
+                    downloadPath = "https://test.atlassian.net/wiki/rest/api/content/page1/child/attachment/att1/download",
                     localRelativePath = "images/att1_test_image.png",
                 ),
                 AttachmentDownload(
